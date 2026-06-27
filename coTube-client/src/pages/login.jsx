@@ -44,6 +44,7 @@ export default function Login() {
         <input
           type="email"
           placeholder="Email"
+          required
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
@@ -52,6 +53,7 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
+          required
           onChange={(e) => setForm({ ...form, passWord: e.target.value })}
           className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
         />
