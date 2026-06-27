@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createRoom, joinRoom } from "../api/room";
+import { createRoom, joinRoom, joinParticipant } from "../api/room";
 import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
@@ -12,7 +12,6 @@ export default function Home() {
   const [password, setPassword] = useState("");
 
   const [roomPassword, setRoomPassword] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
 
   const handleCreate = async () => {
     if (!user) {
@@ -27,7 +26,13 @@ export default function Home() {
         passWord: roomPassword,
       });
 
-      navigate(`/room/${res.data.roomId}`);
+      await joinParticipant(res.data.roomId);
+
+      navigate("/room-created", {
+        state: {
+          roomId: res.data.roomId,
+        },
+      });
     } catch (err) {
       alert(err.response?.data?.message || "Unable to create room");
     }
@@ -40,7 +45,10 @@ export default function Home() {
     }
 
     try {
+
       await joinRoom(roomCode, password);
+
+      await joinParticipant(roomCode);
 
       navigate(`/room/${roomCode}`);
     } catch (err) {
