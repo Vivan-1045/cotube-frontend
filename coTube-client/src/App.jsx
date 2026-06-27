@@ -6,6 +6,8 @@ import Register from "./pages/Register";
 import Room from "./pages/Room";
 import Navbar from "./pages/Navbar";
 import ProtectedRoute from "./pages/ProtectedRoute";
+import RoomCreated from "./pages/RoomCreated";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -25,6 +27,10 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/profile" element={<Profile />} />
+
+        <Route path="/room-created" element={<RoomCreated />} />
       </Routes>
     </>
   );
