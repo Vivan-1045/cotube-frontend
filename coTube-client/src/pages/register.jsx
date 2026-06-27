@@ -42,6 +42,7 @@ export default function Register() {
         {/* Username */}
         <input
           placeholder="Username"
+          required
           onChange={(e) => setForm({ ...form, userName: e.target.value })}
           className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         />
@@ -50,6 +51,7 @@ export default function Register() {
         <input
           type="email"
           placeholder="Email"
+          required
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         />
@@ -58,6 +60,9 @@ export default function Register() {
         <input
           type="password"
           placeholder="Password"
+          required
+          minLength={8}
+          title="Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character."
           onChange={(e) => setForm({ ...form, passWord: e.target.value })}
           className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
         />
