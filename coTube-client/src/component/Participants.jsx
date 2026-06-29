@@ -30,7 +30,7 @@ export default function Participants({ roomId }) {
           key={p.id}
           className="border-b py-2"
         >
-          {p.user.userName}
+          {p.userName}
         </div>
       ))}
 
