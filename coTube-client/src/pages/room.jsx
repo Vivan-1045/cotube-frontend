@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRoomDetails } from "../api/room";
-import { connectSocket, disconnectSocket } from "../websocket/stompClient";
+import { getRoomDetails, joinParticipant ,leaveParticipant} from "../api/room";
+import {
+  connectSocket,
+  disconnectSocket,
+  subscribeSync,
+  subscribeRoom,
+  sendMessage,
+} from "../websocket/stompClient";
 import Participants from "../component/Participants";
 import VideoPlayer from "../component/VideoPlayer";
 
@@ -13,20 +19,40 @@ export default function Room() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const connect = async () => {
+      const token = localStorage.getItem("token");
 
-    connectSocket(token, () => {
-      console.log("Connected!");
-    });
+      await joinParticipant(roomId);
+
+      connectSocket(token, () => {
+        console.log("Connected!");
+
+        subscribeRoom(roomId, (event) => {
+          console.log("Room Event:", event);
+        });
+
+        subscribeSync((response) => {
+          console.log("SYNC RESPONSE:", response);
+        });
+
+        sendMessage("/app/video.sync", {
+          roomId,
+          action: "SYNC_REQUEST",
+        });
+      });
+    };
+
+    connect();
 
     return () => {
+      leaveParticipant(roomId).catch(() => {});
       disconnectSocket();
     };
-  }, []);
+  }, [roomId]);
 
   useEffect(() => {
     loadRoom();
-  }, []);
+  }, [roomId]);
 
   const loadRoom = async () => {
     try {
