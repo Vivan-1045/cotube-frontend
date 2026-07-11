@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRoomDetails, joinParticipant, leaveParticipant } from "../api/room";
+import { getRoomDetails, joinParticipant, leaveParticipant , getParticipants} from "../api/room";
 import {
   connectSocket,
   disconnectSocket,
@@ -23,6 +23,7 @@ export default function Room() {
   const [videoId, setVideoId] = useState(null);
   const [videoUrl, setVideoUrl] = useState("");
   const [remoteAction, setRemoteAction] = useState(null);
+  const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
     const connect = async () => {
@@ -31,7 +32,6 @@ export default function Room() {
       await joinParticipant(roomId);
 
       connectSocket(token, () => {
-        console.log("Connected!");
 
         subscribeRoom(roomId, (event) => {
 
@@ -45,8 +45,6 @@ export default function Room() {
           ) {
             return;
           }
-
-          console.log("Room Event", event);
 
           switch (event.action) {
             case "VIDEO_CHANGE":
@@ -63,6 +61,14 @@ export default function Room() {
 
             case "SEEK":
               setRemoteAction(event);
+              break;
+
+            case "USER_JOINED":
+              setParticipants(event.participants);
+              break;
+
+            case "USER_LEFT":
+              setParticipants(event.participants);
               break;
 
             default:
@@ -95,6 +101,15 @@ export default function Room() {
     loadRoom();
   }, [roomId]);
 
+  useEffect(() => {
+    const load = async () => {
+      const res = await getParticipants(roomId);
+      setParticipants(res.data);
+    };
+
+    load();
+  }, [roomId]);
+
   const loadRoom = async () => {
     try {
       const res = await getRoomDetails(roomId);
@@ -106,6 +121,7 @@ export default function Room() {
       setLoading(false);
     }
   };
+
 
   const handlePlay = (player) => {
     if (user?.userName !== room.hostName) return;
@@ -185,7 +201,9 @@ export default function Room() {
         </div>
 
         <div className="col-span-1">
-          <Participants roomId={room.roomId} />
+          <Participants
+            participants={participants}
+          />
         </div>
       </div>
     </div>
