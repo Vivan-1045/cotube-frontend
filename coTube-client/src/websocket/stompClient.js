@@ -16,12 +16,10 @@ export const connectSocket = (token,onConnect) =>{
         reconnectDelay: 5000,
 
         onConnect: () => {
-            console.log("Connected to WebSocket server");
             onConnect?.();
         },
 
         onStompError: (frame) =>{
-            console.error("STOMP error:", frame);
         }
     
     });

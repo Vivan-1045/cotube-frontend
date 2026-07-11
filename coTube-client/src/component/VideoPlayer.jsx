@@ -35,7 +35,6 @@ export default function VideoPlayer({ videoId ,onPlay, onPause,remoteAction}) {
 
   const onReady = (event) =>{
     playerRef.current = event.target;
-    console.log("Player is ready.");
   }
 
   const onStateChange = (event) =>{
@@ -47,11 +46,9 @@ export default function VideoPlayer({ videoId ,onPlay, onPause,remoteAction}) {
 
      switch(event.data){
       case 1:
-        console.log("PLAY");
         onPlay?.(playerRef.current);
         break;
       case 2:
-        console.log("PAUSE");
         onPause?.(playerRef.current);
         break;
       default:
