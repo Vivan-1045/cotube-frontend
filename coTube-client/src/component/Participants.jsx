@@ -1,4 +1,4 @@
-export default function Participants({ participants }) {
+export default function Participants({ participants ,host}) {
 
     return (
         <div className="border rounded-lg p-4">
@@ -12,7 +12,7 @@ export default function Participants({ participants }) {
                     key={p.id}
                     className="border-b py-2"
                 >
-                    {p.userName}
+                    {p.userName===host?`${p.userName} (Host)`:p.userName}
                 </div>
             ))}
 

@@ -203,6 +203,7 @@ export default function Room() {
         <div className="col-span-1">
           <Participants
             participants={participants}
+            host={room.hostName}
           />
         </div>
       </div>
