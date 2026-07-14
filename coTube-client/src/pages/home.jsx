@@ -19,6 +19,12 @@ export default function Home() {
       return;
     }
 
+    if(!roomName.trim()){
+      alert("Room name is required.");
+      return;
+    }
+
+
     try {
       const res = await createRoom({
         roomName,
@@ -41,6 +47,11 @@ export default function Home() {
   const handleJoin = async () => {
     if (!user) {
       navigate("/login");
+      return;
+    }
+
+    if(!roomCode.trim()){
+      alert("Room code is required to join the room.");
       return;
     }
 
