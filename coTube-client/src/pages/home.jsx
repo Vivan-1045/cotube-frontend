@@ -10,6 +10,7 @@ export default function Home() {
   const [roomName, setRoomName] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const [password, setPassword] = useState("");
+  const [roomCapacity,setRoomCapacity] = useState("");
 
   const [roomPassword, setRoomPassword] = useState("");
 
@@ -24,12 +25,23 @@ export default function Home() {
       return;
     }
 
+    if(!roomCapacity){
+      alert("Select the room capacity.");
+      return;
+    }
+
+    if (roomCapacity < 2 || roomCapacity > 20) {
+      alert("Room capacity must be between 2 and 20.");
+      return;
+    }
+
 
     try {
       const res = await createRoom({
         roomName,
         isPrivate: roomPassword.trim() !== "",
         passWord: roomPassword,
+        maxRoomCapacity: roomCapacity
       });
 
       await joinParticipant(res.data.roomId);
@@ -59,8 +71,6 @@ export default function Home() {
 
       await joinRoom(roomCode, password);
 
-      await joinParticipant(roomCode);
-
       navigate(`/room/${roomCode}`);
     } catch (err) {
       alert(err.response?.data?.message || "Unable to join room");
@@ -86,6 +96,30 @@ export default function Home() {
           placeholder="Password (optional)"
           value={roomPassword}
           onChange={(e) => setRoomPassword(e.target.value)}
+        />
+
+        <input
+          className="border p-2 w-full mb-3"
+          placeholder="Room capacity."
+          type="number"
+          min={2}
+          max={20}
+          value={roomCapacity}
+          onChange={(e) =>{
+            const val = Number(e.target.value);
+
+            if(val>20){
+              alert("Maximum allowed room capacity is 20.");
+              return;
+            }
+
+            if(val<2){
+              alert("Select room capacity atleast 2.");
+              return;
+            }
+
+            setRoomCapacity(val);
+          }}
         />
 
         <button
