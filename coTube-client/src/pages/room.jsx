@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRoomDetails, joinParticipant, leaveParticipant , getParticipants} from "../api/room";
+import { getRoomDetails, joinParticipant, leaveParticipant, getParticipants } from "../api/room";
 import {
   connectSocket,
   disconnectSocket,
@@ -26,68 +26,77 @@ export default function Room() {
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
+
     const connect = async () => {
-      const token = localStorage.getItem("token");
+      try {
+        const token = localStorage.getItem("token");
 
-      await joinParticipant(roomId);
+        await joinParticipant(roomId);
+        const res = await getParticipants(roomId);
+        setParticipants(res.data);
 
-      connectSocket(token, () => {
+        connectSocket(token, () => {
 
-        subscribeRoom(roomId, (event) => {
+          subscribeRoom(roomId, (event) => {
 
-          if (
-            event.sender === user?.email &&
-            (
-              event.action === "PLAY" ||
-              event.action === "PAUSE" ||
-              event.action === "SEEK"
-            )
-          ) {
-            return;
-          }
+            if (
+              event.sender === user?.email &&
+              (
+                event.action === "PLAY" ||
+                event.action === "PAUSE" ||
+                event.action === "SEEK"
+              )
+            ) {
+              return;
+            }
 
-          switch (event.action) {
-            case "VIDEO_CHANGE":
-              setVideoId(event.videoId);
-              break;
+            switch (event.action) {
+              case "VIDEO_CHANGE":
+                setVideoId(event.videoId);
+                break;
 
-            case "PLAY":
-              setRemoteAction(event);
-              break;
+              case "PLAY":
+                setRemoteAction(event);
+                break;
 
-            case "PAUSE":
-              setRemoteAction(event);
-              break;
+              case "PAUSE":
+                setRemoteAction(event);
+                break;
 
-            case "SEEK":
-              setRemoteAction(event);
-              break;
+              case "SEEK":
+                setRemoteAction(event);
+                break;
 
-            case "USER_JOINED":
-              setParticipants(event.participants);
-              break;
+              case "USER_JOINED":
+                setParticipants(event.participants);
+                break;
 
-            case "USER_LEFT":
-              setParticipants(event.participants);
-              break;
+              case "USER_LEFT":
+                setParticipants(event.participants);
+                break;
 
-            default:
-              break;
-          }
+              default:
+                break;
+            }
+          });
+
+          subscribeSync((response) => {
+            if (response.action === "SYNC_RESPONSE") {
+              setVideoId(response.videoId ?? null);
+            }
+          });
+
+          sendMessage("/app/video.sync", {
+            roomId,
+            action: "SYNC_REQUEST",
+          });
         });
-
-        subscribeSync((response) => {
-          if (response.action === "SYNC_RESPONSE") {
-            setVideoId(response.videoId ?? null);
-          }
-        });
-
-        sendMessage("/app/video.sync", {
-          roomId,
-          action: "SYNC_REQUEST",
-        });
-      });
+      } catch (err) {
+        alert("Failed to join the room. Maybe due to network.");
+        navigate("/");
+      }
     };
+
 
     connect();
 
@@ -99,15 +108,6 @@ export default function Room() {
 
   useEffect(() => {
     loadRoom();
-  }, [roomId]);
-
-  useEffect(() => {
-    const load = async () => {
-      const res = await getParticipants(roomId);
-      setParticipants(res.data);
-    };
-
-    load();
   }, [roomId]);
 
   const loadRoom = async () => {
