@@ -25,12 +25,14 @@ export default function Home() {
       return;
     }
 
+    const capacity = Number(roomCapacity);
+
     if(!roomCapacity){
       alert("Select the room capacity.");
       return;
     }
 
-    if (roomCapacity < 2 || roomCapacity > 20) {
+    if (capacity < 2 || capacity > 20) {
       alert("Room capacity must be between 2 and 20.");
       return;
     }
@@ -41,7 +43,7 @@ export default function Home() {
         roomName,
         isPrivate: roomPassword.trim() !== "",
         passWord: roomPassword,
-        maxRoomCapacity: roomCapacity
+        maxRoomCapacity: capacity
       });
 
       await joinParticipant(res.data.roomId);
@@ -106,19 +108,21 @@ export default function Home() {
           max={20}
           value={roomCapacity}
           onChange={(e) =>{
-            const val = Number(e.target.value);
+            const value = e.target.value;
+
+            if(value===""){
+              setRoomCapacity("");
+              return;
+            }
+
+            const val = Number(value);
 
             if(val>20){
               alert("Maximum allowed room capacity is 20.");
               return;
             }
 
-            if(val<2){
-              alert("Select room capacity atleast 2.");
-              return;
-            }
-
-            setRoomCapacity(val);
+            setRoomCapacity(value);
           }}
         />
 
