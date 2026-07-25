@@ -43,10 +43,33 @@ export const subscribeSync = (callback) => {
 };
 
 export const sendMessage = (destination, body) => {
+  if(!client || !client.connected){
+    console.log("WebSocket is not connected.");
+    return;
+  }
+
   client.publish({
     destination,
     body: JSON.stringify(body),
   });
+};
+
+export const subscribeChat = (roomId,callback) =>{
+  return client.subscribe(
+    `/topic/room/${roomId}/chat`,
+    (message) =>{
+      callback(JSON.parse(message.body));
+    }
+  )
+}
+
+export const subscribeChatError = (callback) => {
+  return client.subscribe(
+    "/user/queue/chat-error",
+    (message) => {
+      callback(JSON.parse(message.body));
+    }
+  );
 };
 
 export default client;
