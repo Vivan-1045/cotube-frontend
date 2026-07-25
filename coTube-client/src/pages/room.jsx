@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRoomDetails, joinParticipant, leaveParticipant, getParticipants } from "../api/room";
-import {
-  connectSocket,
-  disconnectSocket,
-  subscribeSync,
-  subscribeRoom,
-  sendMessage,
-} from "../websocket/stompClient";
+import { connectSocket, disconnectSocket, subscribeSync, subscribeRoom, subscribeChat, sendMessage,subscribeChatError} from "../websocket/stompClient";
 import Participants from "../component/Participants";
 import VideoPlayer from "../component/VideoPlayer";
 import { extractVideoId } from "../utils/youtube";
@@ -24,6 +18,8 @@ export default function Room() {
   const [videoUrl, setVideoUrl] = useState("");
   const [remoteAction, setRemoteAction] = useState(null);
   const [participants, setParticipants] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [chatMessage, setChatMessage] = useState("");
 
   useEffect(() => {
 
@@ -80,10 +76,18 @@ export default function Room() {
             }
           });
 
+          subscribeChat(roomId, (message) => {
+            setMessages((prev) => [...prev, message]);
+          });
+
           subscribeSync((response) => {
             if (response.action === "SYNC_RESPONSE") {
               setVideoId(response.videoId ?? null);
             }
+          });
+
+          subscribeChatError((errorMsg) => {
+            alert(errorMsg.errMsg);
           });
 
           sendMessage("/app/video.sync", {
@@ -92,7 +96,6 @@ export default function Room() {
           });
         });
       } catch (err) {
-        alert("Failed to join the room. Maybe due to network.");
         navigate("/");
       }
     };
@@ -134,6 +137,26 @@ export default function Room() {
       videoId
     });
   };
+
+  const handleSendMessage = () => {
+    if (!chatMessage) {
+      return;
+    }
+
+    sendMessage("/app/chat.send", {
+      roomId,
+      message: chatMessage.trim(),
+    });
+
+    setChatMessage("");
+  }
+
+  const handleChatKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
+    }
+  };
+
 
   const handlePause = (player) => {
     if (user?.userName !== room.hostName) return;
@@ -201,10 +224,60 @@ export default function Room() {
         </div>
 
         <div className="col-span-1">
+
           <Participants
             participants={participants}
             host={room.hostName}
           />
+
+          <div className="border rounded mt-6 p-4">
+
+            <h2 className="font-bold text-lg mb-3">
+              Chat
+            </h2>
+
+            <div className="h-64 overflow-y-auto border rounded p-2 mb-3">
+
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className="mb-2"
+                >
+                  <span className="font-semibold">
+                    {msg.sender}
+                  </span>
+
+                  <span className="ml-2">
+                    {msg.message}
+                  </span>
+                </div>
+              ))}
+
+            </div>
+
+            <div className="flex gap-2">
+
+              <input
+                className="border rounded p-2 flex-1"
+                placeholder="Type a message..."
+                value={chatMessage}
+                onChange={(e) =>
+                  setChatMessage(e.target.value)
+                }
+                onKeyDown={handleChatKeyDown}
+              />
+
+              <button
+                onClick={handleSendMessage}
+                className="bg-blue-600 text-white px-3 py-2 rounded"
+              >
+                Send
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
       </div>
     </div>
