@@ -8,6 +8,8 @@ import Navbar from "./pages/Navbar";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import RoomCreated from "./pages/RoomCreated";
 import Profile from "./pages/Profile";
+import VerifyEmail from "./pages/verifyEmail";
+import GuestRoute from "./pages/GuestRoute";
 
 export default function App() {
   return (
@@ -16,8 +18,24 @@ export default function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestRoute>
+              <Register />
+            </GuestRoute>
+          }
+        />
 
         <Route
           path="/room/:roomId"
@@ -28,7 +46,14 @@ export default function App() {
           }
         />
 
-        <Route path="/profile" element={<Profile />} />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }    
+        />
 
         <Route path="/room-created" element={<RoomCreated />} />
       </Routes>
