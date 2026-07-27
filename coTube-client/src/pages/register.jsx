@@ -15,11 +15,15 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      await registerUser(form);
+      const res = await registerUser(form);
 
-      alert("Registration Successful");
+      alert(res.data);
 
-      navigate("/login");
+      navigate("/verify-email", {
+        state: {
+          email: form.email,
+        },
+      });
     } catch (err) {
       alert(err.response?.data?.message || "Registration Failed");
     }
