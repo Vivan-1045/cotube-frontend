@@ -9,10 +9,12 @@ export const loginUser = (data) =>{
 }
 
 export const verifyEmail = (token) => {
-    return api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+    return api.get(`/auth/verify-email?token=${token}`);
 };
 
 export const resendVerificationEmail = (email) =>{
-    return api.post('/auth/resend-verification',{email});
+    return api.post("/auth/resend-verification", null, {
+        params: { email },
+    });
 }
 
