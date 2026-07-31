@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { resendVerificationEmail, verifyEmail } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function VerifyEmail() {
 
@@ -15,6 +16,7 @@ export default function VerifyEmail() {
     const [verified, setVerified] = useState(false);
     const [error, setError] = useState("");
     const [resendCoolDown, setResendCoolDown] = useState(120);
+    const { user } = useAuth();
 
 
     useEffect(() => {
@@ -82,6 +84,12 @@ export default function VerifyEmail() {
 
     const handleResend = async () => {
 
+        if (user) {
+            alert("You are already logged in.");
+            navigate("/");
+            return;
+        }
+
         if (!email) {
             alert("Email not found. Please register again.");
             navigate("/register");
@@ -96,25 +104,37 @@ export default function VerifyEmail() {
 
             setLoading(true);
 
-            await resendVerificationEmail(email);
+            const res = await resendVerificationEmail(email);
 
-            alert(
-                "Verification email sent again. Please check your inbox or spam folder."
-            );
+            const remainingSec = Number(res.data.remainingSecond);
 
-            setResendCoolDown(120);
+            setResendCoolDown(remainingSec);
+
+            alert(res.data.message);
 
         } catch (err) {
 
-            alert(
-                err.response?.data?.message ||
-                "Failed to resend verification email."
-            );
+            const remainingSec = err.response?.data?.remainSec;
+
+            if (remainingSec !== undefined) {
+
+                setResendCoolDown(Number(remainingSec));
+
+                alert(
+                    `Please wait ${remainingSec} seconds before requesting another email.`
+                );
+
+            } else {
+
+                alert(
+                    err.response?.data?.message ||
+                    "Failed to resend verification email."
+                );
+            }
 
         } finally {
 
             setLoading(false);
-
         }
     };
 
@@ -185,11 +205,37 @@ export default function VerifyEmail() {
                         {error}
                     </p>
 
+                    <p className="text-gray-400 text-sm">
+                        You can request a new verification email after the cooldown period.
+                    </p>
+
                     <button
-                        onClick={() => navigate("/register")}
-                        className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition"
+                        onClick={handleResend}
+                        disabled={loading || resendCoolDown > 0}
+                        className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold transition"
                     >
-                        Register Again
+                        {loading
+                            ? "Sending..."
+                            : resendCoolDown > 0
+                                ? `Resend available in ${formatCoolDown()}`
+                                : "Resend Verification Email"
+                        }
+                    </button>
+
+                    {resendCoolDown > 0 && !loading && (
+                        <p className="text-gray-400 text-sm">
+                            You can request another verification email in{" "}
+                            <span className="text-green-400 font-semibold">
+                                {formatCoolDown()}
+                            </span>
+                        </p>
+                    )}
+
+                    <button
+                        onClick={() => navigate("/login")}
+                        className="text-blue-400 hover:underline text-sm"
+                    >
+                        Back to Login
                     </button>
 
                 </div>
@@ -222,7 +268,7 @@ export default function VerifyEmail() {
 
                 <p className="text-gray-400 text-sm">
                     Please click the verification link in your email to activate
-                    your account. The link will expire after a limited time.
+                    your account. The link will expire after 5min.
                 </p>
 
                 <button
