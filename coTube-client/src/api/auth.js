@@ -18,3 +18,7 @@ export const resendVerificationEmail = (email) =>{
     });
 }
 
+export const getverificationStatus = (email) =>{
+    return api.get(`/auth/verification-status?email=${email}`);
+}
+
