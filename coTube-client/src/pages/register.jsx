@@ -16,7 +16,8 @@ export default function Register() {
 
     try {
       const res = await registerUser(form);
-
+      sessionStorage.setItem("verificationEmail",form.email);
+      
       alert(res.data);
 
       navigate("/verify-email", {

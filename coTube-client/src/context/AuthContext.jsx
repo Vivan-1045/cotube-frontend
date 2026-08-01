@@ -11,6 +11,8 @@ export const AuthProvider = ({ children }) => {
   const loginUser = (response) => {
     localStorage.setItem("token", response.token);
 
+    sessionStorage.removeItem("verificationEmail");
+
     const user = {
       userName: response.userName,
       email: response.email,
