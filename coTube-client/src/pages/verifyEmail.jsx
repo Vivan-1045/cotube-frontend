@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { resendVerificationEmail, verifyEmail } from "../api/auth";
+import { resendVerificationEmail, verifyEmail, getverificationStatus } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 
 export default function VerifyEmail() {
@@ -9,13 +9,13 @@ export default function VerifyEmail() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    const email = location.state?.email;
+    const email = location.state?.email || sessionStorage.getItem("verificationEmail");
 
     const [loading, setLoading] = useState(false);
     const [verifying, setVerifying] = useState(true);
     const [verified, setVerified] = useState(false);
     const [error, setError] = useState("");
-    const [resendCoolDown, setResendCoolDown] = useState(120);
+    const [resendCoolDown, setResendCoolDown] = useState(0);
     const { user } = useAuth();
 
 
@@ -39,7 +39,7 @@ export default function VerifyEmail() {
             try {
 
                 await verifyEmail(token);
-
+                sessionStorage.removeItem("verificationEmail");
                 setVerified(true);
 
             } catch (err) {
@@ -72,6 +72,25 @@ export default function VerifyEmail() {
 
         return () => clearInterval(timer);
     }, [resendCoolDown]);
+
+    useEffect(() => {
+        const token = searchParams.get("token");
+
+        if (token) return;
+        if (!email) return;
+
+        const loadCoolDown = async () => {
+            try {
+                const res = await getverificationStatus(email);
+                setResendCoolDown(Number(res.data.remainingSeconds));
+            } catch (err) {
+                console.error("Error fetching verification status:", err);
+                setResendCoolDown(0);
+            }
+        }
+
+        loadCoolDown();
+    }, [email,searchParams]);
 
 
     const formatCoolDown = () => {
@@ -218,7 +237,7 @@ export default function VerifyEmail() {
                             ? "Sending..."
                             : resendCoolDown > 0
                                 ? `Resend available in ${formatCoolDown()}`
-                                : "Resend Verification Email"
+                                : "New Verification Email"
                         }
                     </button>
 
@@ -280,7 +299,7 @@ export default function VerifyEmail() {
                         ? "Sending..."
                         : resendCoolDown > 0
                             ? `Resend available in ${formatCoolDown()}`
-                            : "Resend Verification Email"}
+                            : "New Verification Email"}
                 </button>
 
                 {resendCoolDown > 0 && !loading && (
