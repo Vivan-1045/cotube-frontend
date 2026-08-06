@@ -10,6 +10,8 @@ import RoomCreated from "./pages/RoomCreated";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/verifyEmail";
 import GuestRoute from "./pages/GuestRoute";
+import ForgotPassword from "./pages/forgotPassword";
+import ResetPassword from "./pages/resetPassword";
 
 export default function App() {
   return (
@@ -19,6 +21,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         <Route
           path="/login"
@@ -46,16 +51,19 @@ export default function App() {
           }
         />
 
-        <Route 
-          path="/profile" 
+        <Route
+          path="/profile"
           element={
             <ProtectedRoute>
               <Profile />
             </ProtectedRoute>
-          }    
+          }
         />
 
-        <Route path="/room-created" element={<RoomCreated />} />
+        <Route path="/room-created" element={
+          <ProtectedRoute>
+            <RoomCreated />
+          </ProtectedRoute>} />
       </Routes>
     </>
   );
