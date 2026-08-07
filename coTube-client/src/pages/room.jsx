@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRoomDetails, joinParticipant, leaveParticipant, getParticipants } from "../api/room";
-import { connectSocket, disconnectSocket, subscribeSync, subscribeRoom, subscribeChat, sendMessage,subscribeChatError} from "../websocket/stompClient";
+import { connectSocket, disconnectSocket, subscribeSync, subscribeRoom, subscribeChat, sendMessage, subscribeChatError } from "../websocket/stompClient";
 import Participants from "../component/Participants";
 import VideoPlayer from "../component/VideoPlayer";
 import { extractVideoId } from "../utils/youtube";
@@ -236,22 +236,34 @@ export default function Room() {
               Chat
             </h2>
 
-            <div className="h-64 overflow-y-auto border rounded p-2 mb-3">
+            <div className="h-64 overflow-y-auto border rounded p-2 mb-3 space-y-2">
 
-              {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className="mb-2"
-                >
-                  <span className="font-semibold">
-                    {msg.sender}
-                  </span>
+              {messages.map((msg, index) => {
 
-                  <span className="ml-2">
-                    {msg.message}
-                  </span>
-                </div>
-              ))}
+                const isSender = msg.sender === user?.userName;
+
+                return (
+                  <div
+                    key={index}
+                    className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-3 py-2 rounded-xl ${isSender
+                          ? "bg-blue-600 text-white rounded-br-none"
+                          : "bg-gray-200 text-gray-900 rounded-bl-none"
+                        }`}
+                    >
+                      <div className="text-xs font-semibold mb-1 opacity-70">
+                        {msg.sender}
+                      </div>
+
+                      <div className="break-words">
+                        {msg.message}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
 
             </div>
 
