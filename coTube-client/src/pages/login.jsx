@@ -2,6 +2,7 @@ import { useState } from "react";
 import { loginUser as apiLoginUser } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -19,75 +20,117 @@ export default function Login() {
       const res = await apiLoginUser(form);
 
       loginUser(res.data);
-
+      toast.success("Login Successful");
       navigate("/");
     } catch (err) {
-      alert("Invalid Credentials");
+      toast.error("Invalid Credentials");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 space-y-6"
-      >
-        <h2 className="text-3xl font-bold text-center text-white">
-          Welcome Back
-        </h2>
+    <div className="cotube-page">
+      <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-        <p className="text-center text-gray-300 text-sm">
-          Login to continue to your account
-        </p>
+        <div className="w-full max-w-md">
 
-        {/* Email */}
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
+          <div className="mb-8 text-center">
 
-        {/* Password */}
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          onChange={(e) => setForm({ ...form, passWord: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-        />
+            <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              Welcome Back
+            </h1>
 
-        {/* Button */}
-        <button
-          type="submit"
-          className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition transform hover:scale-[1.02] active:scale-95"
-        >
-          Login
-        </button>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              Login to continue to your CoTube account.
+            </p>
 
-        {/* Footer */}
-        <div className="text-right mt-2">
-          <button
-            type="button"
-            onClick={() => navigate("/forgot-password")}
-            className="text-sm text-blue-400 hover:underline"
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="cotube-card space-y-6 p-6 sm:p-8"
           >
-            Forgot Password?
-          </button>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-300">
+                Email
+              </label>
+
+              <input
+                type="email"
+                placeholder="you@example.com"
+                required
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    email: e.target.value,
+                  })
+                }
+                className="cotube-input"
+              />
+            </div>
+
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+
+                <label className="block text-sm font-medium text-slate-300">
+                  Password
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-xs font-medium text-blue-400 transition-colors hover:text-blue-300"
+                >
+                  Forgot Password?
+                </button>
+
+              </div>
+
+              <input
+                type="password"
+                placeholder="Enter your password"
+                required
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    passWord: e.target.value,
+                  })
+                }
+                className="cotube-input"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="cotube-primary-btn w-full"
+            >
+              Login
+            </button>
+
+            <div className="border-t border-slate-800/80 pt-6 text-center">
+
+              <p className="text-sm text-slate-500">
+                Don't have an account?
+                <button
+                  type="button"
+                  onClick={() => navigate("/register")}
+                  className="ml-1.5 font-medium text-blue-400 transition-colors hover:text-blue-300"
+                >
+                  Register
+                </button>
+              </p>
+
+            </div>
+
+          </form>
+
+          <p className="mt-6 text-center text-xs text-slate-600">
+            Watch together • Stay synchronized • Have fun
+          </p>
+
         </div>
 
-        <p className="text-center text-gray-400 text-sm">
-          Don’t have an account?{" "}
-          <button
-            type="button"
-            onClick={() => navigate("/register")}
-            className="text-blue-600 hover:underline"
-          >
-            Register
-          </button>
-        </p>
-      </form>
+      </main>
     </div>
   );
 }
