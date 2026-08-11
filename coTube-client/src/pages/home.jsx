@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createRoom, joinRoom, joinParticipant } from "../api/room";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -21,19 +22,19 @@ export default function Home() {
     }
 
     if(!roomName.trim()){
-      alert("Room name is required.");
+      toast.error("Room name is required.");
       return;
     }
 
     const capacity = Number(roomCapacity);
 
     if(!roomCapacity){
-      alert("Select the room capacity.");
+      toast.error("Select the room capacity.");
       return;
     }
 
     if (capacity < 2 || capacity > 20) {
-      alert("Room capacity must be between 2 and 20.");
+      toast.error("Room capacity must be between 2 and 20.");
       return;
     }
 
@@ -54,7 +55,7 @@ export default function Home() {
         },
       });
     } catch (err) {
-      alert(err.response?.data?.message || "Unable to create room");
+      toast.error(err.response?.data?.message || "Unable to create room");
     }
   };
 
@@ -65,7 +66,7 @@ export default function Home() {
     }
 
     if(!roomCode.trim()){
-      alert("Room code is required to join the room.");
+      toast.error("Room code is required to join the room.");
       return;
     }
 
@@ -75,7 +76,7 @@ export default function Home() {
 
       navigate(`/room/${roomCode}`);
     } catch (err) {
-      alert(err.response?.data?.message || "Unable to join room");
+      toast.error(err.response?.data?.message || "Unable to join room");
     }
   };
 
@@ -118,7 +119,7 @@ export default function Home() {
             const val = Number(value);
 
             if(val>20){
-              alert("Maximum allowed room capacity is 20.");
+              toast.error("Maximum allowed room capacity is 20.");
               return;
             }
 
