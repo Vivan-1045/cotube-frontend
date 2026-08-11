@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getProfile } from "../api/profileApi";
 import { deleteRoom } from "../api/room";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadProfile();
@@ -67,6 +69,10 @@ export default function Profile() {
         <p><strong>Total Rooms Created:</strong> {profile.totalRoomsCreated}</p>
 
         <p><strong>Active Rooms:</strong> {profile.activeRooms}</p>
+
+        <p><strong>Update Password:</strong> <button type="button"
+          onClick={() => navigate("/forgot-password")}
+          className="text-sm text-blue-400 hover:underline">Change Password</button></p>
 
       </div>
 
