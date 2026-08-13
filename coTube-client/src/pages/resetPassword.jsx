@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { validateResetToken, resetPassword } from "../api/auth";
+import toast from "react-hot-toast";
 
 export default function ResetPassword() {
 
@@ -66,14 +67,14 @@ export default function ResetPassword() {
 
             const res = await resetPassword(token, password);
             sessionStorage.removeItem("resetPasswordEmail");
-            
-            alert(res.data);
+
+            toast.success(res.data);
 
             navigate("/login", { replace: true });
 
         } catch (err) {
 
-            alert(
+            toast.error(
                 err.response?.data?.message ||
                 "Failed to reset password."
             );
@@ -87,103 +88,163 @@ export default function ResetPassword() {
     };
 
     if (loading) {
-
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
-                <div className="text-white text-xl">
-                    Validating reset link...
-                </div>
+            <div className="cotube-page">
+                <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
+                    <div className="text-center">
+
+                        <div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-2 border-slate-700 border-t-blue-400" />
+
+                        <p className="text-sm font-medium text-slate-300">
+                            Validating reset link...
+                        </p>
+
+                        <p className="mt-2 text-xs text-slate-500">
+                            Please wait a moment.
+                        </p>
+
+                    </div>
+                </main>
             </div>
         );
-
     }
 
     if (!validToken) {
-
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+            <div className="cotube-page">
+                <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                    <div className="w-full max-w-md">
 
-                    <div className="text-5xl">❌</div>
+                        <div className="mb-8 text-center">
 
-                    <h2 className="text-3xl font-bold text-white">
-                        Reset Link Invalid
-                    </h2>
+                            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/[0.06] text-2xl">
+                                ❌
+                            </div>
 
-                    <p className="text-red-400">
-                        {error}
-                    </p>
+                            <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                                Reset Link Invalid
+                            </h1>
 
-                    <button
-                        onClick={() => navigate("/forgot-password")}
-                        className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
-                    >
-                        Request New Reset Link
-                    </button>
+                            <p className="mt-3 text-sm leading-6 text-red-400">
+                                {error}
+                            </p>
 
-                    <button
-                        onClick={() => navigate("/login")}
-                        className="text-blue-400 hover:underline text-sm"
-                    >
-                        Back to Login
-                    </button>
+                        </div>
 
-                </div>
+                        <div className="cotube-card space-y-4 p-6 sm:p-8">
 
+                            <button
+                                onClick={() => navigate("/forgot-password")}
+                                className="cotube-primary-btn w-full"
+                            >
+                                Request New Reset Link
+                            </button>
+
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="w-full py-2 text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
+                            >
+                                ← Back to Login
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </main>
             </div>
         );
-
     }
 
     return (
+        <div className="cotube-page">
+            <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+                <div className="w-full max-w-md">
 
-            <form
-                onSubmit={handleReset}
-                className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 space-y-6"
-            >
+                    <div className="mb-8 text-center">
 
-                <h2 className="text-3xl font-bold text-center text-white">
-                    Reset Password
-                </h2>
+                        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                            Reset Password
+                        </h1>
 
-                <p className="text-center text-gray-300 text-sm">
-                    Enter your new password
-                </p>
+                        <p className="mt-3 text-sm leading-6 text-slate-400">
+                            Create a new password for your CoTube account.
+                        </p>
 
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="New Password"
-                    required
-                    minLength={8}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                />
+                    </div>
 
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm New Password"
-                    required
-                    minLength={8}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder-gray-300 border border-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-                />
+                    <form
+                        onSubmit={handleReset}
+                        className="cotube-card space-y-6 p-6 sm:p-8"
+                    >
 
-                <button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-semibold transition"
-                >
-                    {submitting ? "Resetting..." : "Reset Password"}
-                </button>
+                        <div>
 
-            </form>
+                            <label className="mb-2 block text-sm font-medium text-slate-300">
+                                New Password
+                            </label>
 
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your new password"
+                                required
+                                minLength={8}
+                                className="cotube-input"
+                            />
+
+                        </div>
+
+                        <div>
+
+                            <label className="mb-2 block text-sm font-medium text-slate-300">
+                                Confirm Password
+                            </label>
+
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Confirm your new password"
+                                required
+                                minLength={8}
+                                className="cotube-input"
+                            />
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="cotube-primary-btn w-full disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {submitting ? "Resetting..." : "Reset Password"}
+                        </button>
+
+                        <div className="border-t border-slate-800/80 pt-6 text-center">
+
+                            <button
+                                type="button"
+                                onClick={() => navigate("/login")}
+                                className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
+                            >
+                                ← Back to Login
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <p className="mt-6 text-center text-xs text-slate-600">
+                        Secure password recovery • CoTube
+                    </p>
+
+                </div>
+
+            </main>
         </div>
-
     );
 }

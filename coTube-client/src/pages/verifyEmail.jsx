@@ -2,6 +2,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { resendVerificationEmail, verifyEmail, getverificationStatus } from "../api/auth";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function VerifyEmail() {
 
@@ -84,13 +85,12 @@ export default function VerifyEmail() {
                 const res = await getverificationStatus(email);
                 setResendCoolDown(Number(res.data.remainingSeconds));
             } catch (err) {
-                console.error("Error fetching verification status:", err);
                 setResendCoolDown(0);
             }
         }
 
         loadCoolDown();
-    }, [email,searchParams]);
+    }, [email, searchParams]);
 
 
     const formatCoolDown = () => {
@@ -104,13 +104,13 @@ export default function VerifyEmail() {
     const handleResend = async () => {
 
         if (user) {
-            alert("You are already logged in.");
+            toast.success("You are already logged in.");
             navigate("/");
             return;
         }
 
         if (!email) {
-            alert("Email not found. Please register again.");
+            toast.error("Email not found. Please register again.");
             navigate("/register");
             return;
         }
@@ -129,7 +129,7 @@ export default function VerifyEmail() {
 
             setResendCoolDown(remainingSec);
 
-            alert(res.data.message);
+            toast.success(res.data.message);
 
         } catch (err) {
 
@@ -139,13 +139,13 @@ export default function VerifyEmail() {
 
                 setResendCoolDown(Number(remainingSec));
 
-                alert(
+                toast.error(
                     `Please wait ${remainingSec} seconds before requesting another email.`
                 );
 
             } else {
 
-                alert(
+                toast.error(
                     err.response?.data?.message ||
                     "Failed to resend verification email."
                 );
@@ -159,167 +159,223 @@ export default function VerifyEmail() {
 
 
     if (verifying) {
-
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+            <div className="cotube-page">
+                <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
 
-                <div className="text-white text-xl">
-                    Verifying your email...
-                </div>
+                    <div className="text-center">
 
+                        <div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-2 border-slate-700 border-t-blue-400" />
+
+                        <p className="text-sm font-medium text-slate-300">
+                            Verifying your email...
+                        </p>
+
+                        <p className="mt-2 text-xs text-slate-500">
+                            Please wait while we verify your account.
+                        </p>
+
+                    </div>
+
+                </main>
             </div>
         );
     }
 
 
     if (verified) {
-
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+            <div className="cotube-page">
+                <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                    <div className="w-full max-w-md">
 
-                    <div className="text-5xl">
-                        ✅
+                        <div className="cotube-card p-6 text-center sm:p-8">
+
+                            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-500/20 bg-emerald-500/[0.06] text-3xl">
+                                ✓
+                            </div>
+
+                            <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                                Email Verified
+                            </h1>
+
+                            <p className="mt-3 text-sm leading-6 text-slate-400">
+                                Your email has been successfully verified.
+                                Your CoTube account is now active.
+                            </p>
+
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="cotube-primary-btn mt-7 w-full"
+                            >
+                                Go to Login
+                            </button>
+
+                        </div>
+
                     </div>
 
-                    <h2 className="text-3xl font-bold text-white">
-                        Email Verified Successfully
-                    </h2>
-
-                    <p className="text-gray-300">
-                        Your account has been successfully verified.
-                    </p>
-
-                    <button
-                        onClick={() => navigate("/login")}
-                        className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
-                    >
-                        Go to Login
-                    </button>
-
-                </div>
-
+                </main>
             </div>
         );
     }
 
 
     if (error) {
-
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+            <div className="cotube-page">
+                <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                    <div className="w-full max-w-md">
 
-                    <div className="text-5xl">
-                        ❌
+                        <div className="cotube-card p-6 text-center sm:p-8">
+
+
+                            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/[0.06] text-2xl">
+                                ✕
+                            </div>
+
+                            <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                                Verification Failed
+                            </h1>
+
+                            <p className="mt-3 text-sm leading-6 text-red-400">
+                                {error}
+                            </p>
+
+                            <p className="mt-4 text-sm leading-6 text-slate-500">
+                                You can request a new verification email after
+                                the cooldown period.
+                            </p>
+
+                            <button
+                                onClick={handleResend}
+                                disabled={loading || resendCoolDown > 0}
+                                className="cotube-join-btn mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                {loading
+                                    ? "Sending..."
+                                    : resendCoolDown > 0
+                                        ? `Resend available in ${formatCoolDown()}`
+                                        : "New Verification Email"}
+                            </button>
+
+
+                            {resendCoolDown > 0 && !loading && (
+                                <p className="mt-4 text-sm text-slate-500">
+                                    You can request another verification email in{" "}
+                                    <span className="font-semibold text-emerald-400">
+                                        {formatCoolDown()}
+                                    </span>
+                                </p>
+                            )}
+
+
+                            <div className="mt-6 border-t border-slate-800/80 pt-6">
+
+                                <button
+                                    onClick={() => navigate("/login")}
+                                    className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
+                                >
+                                    ← Back to Login
+                                </button>
+
+                            </div>
+
+                        </div>
+
                     </div>
 
-                    <h2 className="text-3xl font-bold text-white">
-                        Verification Failed
-                    </h2>
-
-                    <p className="text-red-400">
-                        {error}
-                    </p>
-
-                    <p className="text-gray-400 text-sm">
-                        You can request a new verification email after the cooldown period.
-                    </p>
-
-                    <button
-                        onClick={handleResend}
-                        disabled={loading || resendCoolDown > 0}
-                        className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold transition"
-                    >
-                        {loading
-                            ? "Sending..."
-                            : resendCoolDown > 0
-                                ? `Resend available in ${formatCoolDown()}`
-                                : "New Verification Email"
-                        }
-                    </button>
-
-                    {resendCoolDown > 0 && !loading && (
-                        <p className="text-gray-400 text-sm">
-                            You can request another verification email in{" "}
-                            <span className="text-green-400 font-semibold">
-                                {formatCoolDown()}
-                            </span>
-                        </p>
-                    )}
-
-                    <button
-                        onClick={() => navigate("/login")}
-                        className="text-blue-400 hover:underline text-sm"
-                    >
-                        Back to Login
-                    </button>
-
-                </div>
-
+                </main>
             </div>
         );
     }
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+        <div className="cotube-page">
+            <main className="relative z-10 flex min-h-screen items-center justify-center px-4 py-12 sm:px-6">
 
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl p-8 text-center space-y-6">
+                <div className="w-full max-w-md">
 
-                <div className="text-5xl">
-                    📧
+                    <div className="cotube-card p-6 text-center sm:p-8">
+
+                        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-500/20 bg-blue-500/[0.06] text-2xl">
+                            ✉
+                        </div>
+
+                        <h1 className="text-3xl font-extrabold tracking-tight text-white">
+                            Check Your Email
+                        </h1>
+
+                        <p className="mt-3 text-sm leading-6 text-slate-400">
+                            We've sent a verification link to:
+                        </p>
+
+                        <p className="mt-3 break-all text-sm font-semibold text-blue-400">
+                            {email}
+                        </p>
+
+                        <p className="mt-5 text-sm leading-6 text-slate-500">
+                            Click the verification link in your email to activate
+                            your account.
+                        </p>
+
+                        <div className="mt-4 rounded-xl border border-slate-800/80 bg-slate-900/40 px-4 py-3">
+
+                            <p className="text-xs text-slate-500">
+                                This verification link expires after{" "}
+                                <span className="font-semibold text-slate-300">
+                                    5 minutes
+                                </span>.
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            onClick={handleResend}
+                            disabled={loading || resendCoolDown > 0}
+                            className="cotube-join-btn mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {loading
+                                ? "Sending..."
+                                : resendCoolDown > 0
+                                    ? `Resend available in ${formatCoolDown()}`
+                                    : "New Verification Email"}
+                        </button>
+
+
+                        {resendCoolDown > 0 && !loading && (
+                            <p className="mt-4 text-sm text-slate-500">
+                                You can request another verification email in{" "}
+                                <span className="font-semibold text-emerald-400">
+                                    {formatCoolDown()}
+                                </span>
+                            </p>
+                        )}
+
+                        <div className="mt-6 border-t border-slate-800/80 pt-6">
+
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
+                            >
+                                ← Back to Login
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <p className="mt-6 text-center text-xs text-slate-600">
+                        Secure email verification • CoTube
+                    </p>
+
                 </div>
 
-                <h2 className="text-3xl font-bold text-white">
-                    Check Your Email
-                </h2>
-
-                <p className="text-gray-300">
-                    We have sent a verification link to:
-                </p>
-
-                <p className="text-green-400 font-semibold break-all">
-                    {email}
-                </p>
-
-                <p className="text-gray-400 text-sm">
-                    Please click the verification link in your email to activate
-                    your account. The link will expire after 5min.
-                </p>
-
-                <button
-                    onClick={handleResend}
-                    disabled={loading || resendCoolDown > 0}
-                    className="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold transition"
-                >
-                    {loading
-                        ? "Sending..."
-                        : resendCoolDown > 0
-                            ? `Resend available in ${formatCoolDown()}`
-                            : "New Verification Email"}
-                </button>
-
-                {resendCoolDown > 0 && !loading && (
-                    <p className="text-gray-400 text-sm">
-                        You can request another verification email in{" "}
-                        <span className="text-green-400 font-semibold">
-                            {formatCoolDown()}
-                        </span>
-                    </p>
-                )}
-
-                <button
-                    onClick={() => navigate("/login")}
-                    className="text-blue-400 hover:underline text-sm"
-                >
-                    Back to Login
-                </button>
-
-            </div>
-
+            </main>
         </div>
     );
 }
