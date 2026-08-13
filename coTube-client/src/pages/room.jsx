@@ -200,7 +200,6 @@ export default function Room() {
   return (
     <div className="min-h-screen bg-[#070b18] text-white">
 
-      {/* Background */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(59,130,246,0.08),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(139,92,246,0.08),transparent_30%)]" />
 
@@ -218,7 +217,6 @@ export default function Room() {
 
       <main className="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
 
-        {/* Header */}
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
           <div className="min-w-0">
@@ -246,7 +244,7 @@ export default function Room() {
         </div>
 
 
-        {/* Host Video Controls */}
+
         {user?.userName === room.hostName && (
           <div className="mb-5 rounded-2xl border border-slate-800/80 bg-[#0b1224]/90 p-3 shadow-xl sm:p-4">
 
@@ -271,10 +269,9 @@ export default function Room() {
         )}
 
 
-        {/* Main Room Layout */}
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
 
-          {/* ================= VIDEO ================= */}
+
           <section className="min-w-0">
             <div className="overflow-hidden rounded-2xl border border-slate-800/80 bg-black shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
 
@@ -306,10 +303,8 @@ export default function Room() {
           </section>
 
 
-          {/* ================= SIDEBAR ================= */}
           <aside className="min-w-0 space-y-5">
 
-            {/* Participants */}
             <div className="overflow-hidden rounded-2xl border border-slate-800/80 bg-[#0b1224]/90 shadow-xl">
 
               <div className="border-b border-slate-800/70 px-4 py-3">
@@ -330,10 +325,9 @@ export default function Room() {
             </div>
 
 
-            {/* Chat */}
+
             <div className="overflow-hidden rounded-2xl border border-slate-800/80 bg-[#0b1224]/90 shadow-xl">
 
-              {/* Chat Header */}
               <div className="border-b border-slate-800/70 px-4 py-3">
 
                 <div className="flex items-center justify-between">
@@ -351,7 +345,6 @@ export default function Room() {
               </div>
 
 
-              {/* Messages */}
               <div className="h-64 overflow-y-auto p-3 sm:h-72">
 
                 {messages.length === 0 ? (
@@ -417,7 +410,6 @@ export default function Room() {
               </div>
 
 
-              {/* Chat Input */}
               <div className="border-t border-slate-800/70 p-3">
 
                 <div className="flex gap-2">
