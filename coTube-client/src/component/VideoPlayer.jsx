@@ -56,26 +56,32 @@ export default function VideoPlayer({ videoId ,onPlay, onPause,remoteAction}) {
      }
   }
 
-  if (!videoId) {
+  if(!videoId) {
     return (
-      <div className="border rounded p-6 text-center">
+      <div className="flex h-full w-full items-center justify-center bg-[#050914] text-sm text-slate-500">
         No video selected
       </div>
     );
   }
 
   return (
-    <YouTube
-      videoId={videoId}
-      onReady={onReady}
-      onStateChange={onStateChange}
-      opts={{
-        width: "100%",
-        height: "500",
-        playerVars: {
-          autoplay:0,
-        },
-      }}
-    />
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-black">
+      <YouTube
+        videoId={videoId}
+        onReady={onReady}
+        onStateChange={onStateChange}
+        className="h-full w-full"
+        iframeClassName="h-full w-full"
+        opts={{
+          width: "100%",
+          height: "100%",
+          playerVars: {
+            autoplay: 0,
+            rel: 0,
+            modestbranding: 1,
+          },
+        }}
+      />
+    </div>
   );
 }
