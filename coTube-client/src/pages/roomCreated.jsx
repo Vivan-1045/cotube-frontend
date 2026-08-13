@@ -59,9 +59,10 @@ export default function RoomCreated() {
                 </div>
 
                 <button
-                  onClick={() =>
-                    navigator.clipboard.writeText(roomId)
-                  }
+                  onClick={() =>{
+                    navigator.clipboard.writeText(roomId);
+                    toast.success("Room ID copied.");
+                  }}
                   className="h-12 rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 text-sm font-semibold text-blue-300 transition-all duration-200 hover:border-blue-400/30 hover:bg-blue-500/15 hover:text-blue-200 active:scale-[0.97]"
                 >
                   Copy
