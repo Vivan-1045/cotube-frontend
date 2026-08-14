@@ -12,11 +12,11 @@ import VerifyEmail from "./pages/verifyEmail";
 import GuestRoute from "./pages/GuestRoute";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
+import Layout from "./component/layout";
 
 export default function App() {
   return (
-    <>
-      <Navbar />
+    <Layout>
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -65,6 +65,6 @@ export default function App() {
             <RoomCreated />
           </ProtectedRoute>} />
       </Routes>
-    </>
+    </Layout>
   );
 }
