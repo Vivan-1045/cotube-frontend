@@ -12,10 +12,15 @@ export default function Home() {
   const [roomCode, setRoomCode] = useState("");
   const [password, setPassword] = useState("");
   const [roomCapacity, setRoomCapacity] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
 
   const [roomPassword, setRoomPassword] = useState("");
 
   const handleCreate = async () => {
+
+    if (isCreating) return;
+
     if (!user) {
       navigate("/login");
       return;
@@ -39,6 +44,7 @@ export default function Home() {
     }
 
 
+    setIsCreating(true);
     try {
       const res = await createRoom({
         roomName,
@@ -56,10 +62,14 @@ export default function Home() {
       });
     } catch (err) {
       toast.error(err.response?.data?.message || "Unable to create room");
+    } finally {
+      setIsCreating(false);
     }
   };
 
   const handleJoin = async () => {
+
+    if (isJoining) return;
     if (!user) {
       navigate("/login");
       return;
@@ -70,6 +80,7 @@ export default function Home() {
       return;
     }
 
+    setIsJoining(true);
     try {
 
       await joinRoom(roomCode, password);
@@ -77,6 +88,8 @@ export default function Home() {
       navigate(`/room/${roomCode}`);
     } catch (err) {
       toast.error(err.response?.data?.message || "Unable to join room");
+    }finally{
+      setIsJoining(false);
     }
   };
 
@@ -225,10 +238,21 @@ export default function Home() {
 
                 <button
                   onClick={handleCreate}
-                  className="cotube-primary-btn w-full"
+                  disabled={isCreating}
+                  className={`cotube-primary-btn w-full ${isCreating ? "cursor-not-allowed opacity-60" : ""
+                    }`}
                 >
-                  <span className="mr-2 text-lg">+</span>
-                  Create Room
+                  {isCreating ? (
+                    <>
+                      <span className="mr-2 inline-block animate-spin">⟳</span>
+                      Creating Room...
+                    </>
+                  ) : (
+                    <>
+                      <span className="mr-2 text-lg">+</span>
+                      Create Room
+                    </>
+                  )}
                 </button>
 
               </div>
@@ -304,9 +328,21 @@ export default function Home() {
 
                   <button
                     onClick={handleJoin}
-                    className="cotube-join-btn w-full"
+                    disabled={isJoining}
+                    className={`cotube-join-btn w-full ${isJoining ? "cursor-not-allowed opacity-60" : ""
+                      }`}
                   >
-                    Join Room
+                    { isJoining ? (
+                      <>
+                        <span className="mr-2 inline-block animate-spin">⟳</span>
+                        Joining Room...
+                      </>
+                    ) : (
+                      <>
+                        <span className="mr-2 text-lg">→</span>
+                        Join Room
+                      </>
+                    )}
                   </button>
 
                 </div>
