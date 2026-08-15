@@ -48,6 +48,10 @@ html.dark {
 
   --navbar-bg: rgba(7, 11, 24, 0.05);
   --navbar-border: rgba(255, 255, 255, 0.06);
+
+  --toast-bg: rgba(15, 23, 42, 0.95);
+  --toast-text: #f8fafc;
+  --toast-border: rgba(255, 255, 255, 0.1);
 }
 
 html.light {
@@ -66,6 +70,10 @@ html.light {
 
   --navbar-bg: rgba(255, 255, 255, 0.07);
   --navbar-border: rgba(15, 23, 42, 0.08);
+
+  --toast-bg: rgba(255, 255, 255, 0.95);
+  --toast-text: #0f172a;
+  --toast-border: rgba(15, 23, 42, 0.1);
 }
 
 html.light .text-white {
