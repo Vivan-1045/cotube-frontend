@@ -2,17 +2,11 @@ import Navbar from "../pages/navbar"
 
 export default function Layout({ children }) {
     return (
-        <div className="relative min-h-screen overflow-x-hidden bg-[#070b18] text-white">
+        <div className="cotube-page relative min-h-screen overflow-x-hidden text-[var(--text-primary)]">
 
             <div className="pointer-events-none fixed inset-0 z-0">
 
-                <div
-                    className="
-            absolute inset-0
-            bg-[radial-gradient(circle_at_15%_15%,rgba(59,130,246,0.10),transparent_30%),
-                radial-gradient(circle_at_85%_20%,rgba(139,92,246,0.10),transparent_30%)]
-          "
-                />
+                <div className="pointer-events-none fixed inset-0 z-0" />
 
                 <div
                     className="absolute inset-0 opacity-[0.035]"
