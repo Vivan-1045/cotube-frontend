@@ -2,9 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Profile from "./Profile";
 import logo from "../assets/cotube-logo.png";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -14,7 +17,7 @@ export default function Navbar() {
 
   return (
     <nav className="fixed left-3 right-3 top-3 z-50 overflow-hidden rounded-2xl bg-transparent">
-      <div className="absolute inset-0 -z-10 rounded-2xl bg-white/[0.01] backdrop-blur-sm" />
+      <div className="navbar-glass absolute inset-0 -z-10 rounded-2xl" />
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 sm:h-24 sm:px-6 lg:px-8">
 
         <Link
@@ -28,8 +31,16 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Right Side */}
+
         <div className="flex items-center gap-1.5 sm:gap-3">
+
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.03] text-lg text-slate-300 backdrop-blur-md transition hover:bg-white/[0.08]"
+          >
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
 
           {user ? (
             <>
