@@ -12,6 +12,7 @@ export default function Login() {
 
   const { loginUser } = useAuth();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ export default function Login() {
 
               <input
                 type="email"
-                placeholder="you@example.com"
+                placeholder="your@example.com"
                 required
                 onChange={(e) =>
                   setForm({
@@ -86,18 +87,27 @@ export default function Login() {
 
               </div>
 
-              <input
-                type="password"
-                placeholder="Enter your password"
-                required
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    passWord: e.target.value,
-                  })
-                }
-                className="cotube-input"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  required
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      passWord: e.target.value,
+                    })
+                  }
+                  className="cotube-input pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 transition hover:text-white"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
             </div>
 
             <button
