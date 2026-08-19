@@ -13,9 +13,13 @@ export default function Login() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    if (loading) return;
+
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await apiLoginUser(form);
@@ -24,7 +28,17 @@ export default function Login() {
       toast.success("Login Successful");
       navigate("/");
     } catch (err) {
-      toast.error("Invalid Credentials");
+      if (err.response?.status === 500) {
+        toast.error("Internal Server Error. Please try again later.");
+      } else if (err.response?.status === 401) {
+        toast.error("Invalid Credentials");
+      } else if (!err.response) {
+        toast.error("Unable to connect to the server.");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -112,10 +126,15 @@ export default function Login() {
 
             <button
               type="submit"
-              className="cotube-primary-btn w-full"
+              disabled={loading}
+              className={`cotube-primary-btn w-full ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+              {/* className="cotube-primary-btn w-full"
             >
               Login
-            </button>
+            </button> */}
 
             <div className="border-t border-slate-800/80 pt-6 text-center">
 
