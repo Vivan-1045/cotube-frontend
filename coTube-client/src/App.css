@@ -17,6 +17,7 @@
 
   --page-bg: #f8fafc;
   --text-primary: #0f172a;
+  --text-secondary: #64748b;
 
   --grid-color: rgba(15, 23, 42, 0.055);
 
@@ -28,13 +29,21 @@
   --input-text: #0f172a;
   --input-placeholder: #64748b;
 
-  --navbar-bg: rgba(255, 255, 255, 0.08);
+  --navbar-bg: rgba(255, 255, 255, 0.07);
   --navbar-border: rgba(15, 23, 42, 0.08);
+
+  --chat-received-bg: #e2e8f0;
+  --chat-received-text: #1e293b;
+
+  --toast-bg: rgba(255, 255, 255, 0.95);
+  --toast-text: #0f172a;
+  --toast-border: rgba(15, 23, 42, 0.1);
 }
 
 html.dark {
   --page-bg: #070b18;
   --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
 
   --grid-color: rgba(148, 163, 184, 0.035);
 
@@ -49,6 +58,9 @@ html.dark {
   --navbar-bg: rgba(7, 11, 24, 0.05);
   --navbar-border: rgba(255, 255, 255, 0.06);
 
+  --chat-received-bg: #1e293b;
+  --chat-received-text: #e2e8f0;
+
   --toast-bg: rgba(15, 23, 42, 0.95);
   --toast-text: #f8fafc;
   --toast-border: rgba(255, 255, 255, 0.1);
@@ -57,6 +69,7 @@ html.dark {
 html.light {
   --page-bg: #f8fafc;
   --text-primary: #0f172a;
+  --text-secondary: #64748b;
 
   --grid-color: rgba(15, 23, 42, 0.055);
 
@@ -70,6 +83,9 @@ html.light {
 
   --navbar-bg: rgba(255, 255, 255, 0.07);
   --navbar-border: rgba(15, 23, 42, 0.08);
+
+  --chat-received-bg: #e2e8f0;
+  --chat-received-text: #1e293b;
 
   --toast-bg: rgba(255, 255, 255, 0.95);
   --toast-text: #0f172a;
