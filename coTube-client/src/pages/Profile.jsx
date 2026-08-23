@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error,setError] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,11 +16,15 @@ export default function Profile() {
   }, []);
 
   const loadProfile = async () => {
+    setLoading(true);
+    setError("");
+
     try {
       const res = await getProfile();
       setProfile(res.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Unable to load profile");
+      const msg = (err.response?.data?.message || "Unable to connect to the server. Please try again.");
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -139,6 +145,52 @@ export default function Profile() {
             <p className="text-sm font-medium text-slate-300">
               Loading profile...
             </p>
+
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="cotube-page">
+        <main className="relative z-10 flex min-h-screen items-center justify-center px-4">
+          <div className="w-full max-w-md text-center">
+
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-red-500/20 bg-red-500/10 text-2xl">
+              ⚠️
+            </div>
+
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-red-400">
+              Connection Error
+            </p>
+
+            <h1 className="text-2xl font-bold tracking-tight text-white">
+              Unable to load profile
+            </h1>
+
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              {error}
+            </p>
+
+            <div className="mt-7 flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={loadProfile}
+                className="rounded-xl border border-blue-500/30 bg-blue-500/[0.08] px-5 py-2.5 text-sm font-semibold text-blue-400 transition hover:border-blue-500/50 hover:bg-blue-500/[0.14] hover:text-blue-300 active:scale-[0.98]"
+              >
+                Try Again
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="rounded-xl border border-slate-700/60 bg-white/[0.03] px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-white/[0.06] hover:text-white active:scale-[0.98]"
+              >
+                Go Home
+              </button>
+            </div>
 
           </div>
         </main>
