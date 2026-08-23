@@ -1,12 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Room from "./pages/Room";
-import Navbar from "./pages/Navbar";
-import ProtectedRoute from "./pages/ProtectedRoute";
-import RoomCreated from "./pages/RoomCreated";
+import Home from "./pages/home";
+import Login from "./pages/login";
+import Register from "./pages/register";
+import Room from "./pages/room";
+import ProtectedRoute from "./pages/protectedRoute";
+import RoomCreated from "./pages/roomCreated";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/verifyEmail";
 import GuestRoute from "./pages/GuestRoute";
