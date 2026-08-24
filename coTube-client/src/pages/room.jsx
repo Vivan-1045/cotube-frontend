@@ -50,6 +50,7 @@ export default function Room() {
             switch (event.action) {
               case "VIDEO_CHANGE":
                 setVideoId(event.videoId);
+                toast.success(`${event.userName} changed the video`);
                 break;
 
               case "PLAY":
@@ -66,10 +67,16 @@ export default function Room() {
 
               case "USER_JOINED":
                 setParticipants(event.participants);
+                toast.success(`${event.userName} joined the room`);
                 break;
 
               case "USER_LEFT":
                 setParticipants(event.participants);
+                if (event.userName === room.hostName) {
+                  toast.error("Host left the room. The room will be closed.");
+                  navigate("/");
+                }
+                toast.error(`${event.userName} left the room`);
                 break;
 
               default:
