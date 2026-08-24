@@ -50,7 +50,7 @@ export default function Room() {
             switch (event.action) {
               case "VIDEO_CHANGE":
                 setVideoId(event.videoId);
-                toast.success(`${event.userName} changed the video`);
+                toast.success(`${room.hostName} changed the video`);
                 break;
 
               case "PLAY":
@@ -67,16 +67,21 @@ export default function Room() {
 
               case "USER_JOINED":
                 setParticipants(event.participants);
-                toast.success(`${event.userName} joined the room`);
+                toast.success("A new user joined the room");
                 break;
 
               case "USER_LEFT":
                 setParticipants(event.participants);
-                if (event.userName === room.hostName) {
-                  toast.error("Host left the room. The room will be closed.");
-                  navigate("/");
-                }
-                toast.error(`${event.userName} left the room`);
+                toast.error("A user left the room");
+                break;
+
+              case "ROOM_CLOSED":
+                toast.error(
+                  "The host has left the room. This room is now inactive. Please contact the host.",
+                  { duration: 5000 }
+                );
+
+                navigate("/");
                 break;
 
               default:
@@ -209,70 +214,70 @@ export default function Room() {
   }
 
   return (
-  <div className="min-h-screen bg-[var(--page-bg)] text-[var(--text-primary)] transition-colors duration-300">
+    <div className="min-h-screen bg-[var(--page-bg)] text-[var(--text-primary)] transition-colors duration-300">
 
-    {/* Background */}
-    <div className="fixed inset-0 pointer-events-none">
-      <div
-        className="
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div
+          className="
           absolute inset-0
           bg-[radial-gradient(circle_at_15%_15%,rgba(59,130,246,0.08),transparent_30%),
           radial-gradient(circle_at_85%_20%,rgba(139,92,246,0.08),transparent_30%)]
         "
-      />
+        />
 
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
             linear-gradient(var(--grid-color) 1px, transparent 1px),
             linear-gradient(90deg, var(--grid-color) 1px, transparent 1px)
           `,
-          backgroundSize: "45px 45px",
-        }}
-      />
-    </div>
-
-    <main className="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
-
-      {/* Room Header */}
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-        <div className="min-w-0">
-
-          <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-            {room.roomName}
-          </h1>
-
-          <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)] sm:text-sm">
-
-            <span>
-              Room ID:{" "}
-              <span className="text-[var(--text-secondary)]">
-                {room.roomId}
-              </span>
-            </span>
-
-            <span>
-              Host:{" "}
-              <span className="text-[var(--text-secondary)]">
-                {room.hostName}
-              </span>
-            </span>
-
-          </div>
-        </div>
-
+            backgroundSize: "45px 45px",
+          }}
+        />
       </div>
 
-      {/* Host Video URL Input */}
-      {user?.userName === room.hostName && (
-        <div className="mb-5 rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg-1)] p-3 shadow-xl sm:p-4">
+      <main className="relative mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
 
-          <div className="flex flex-col gap-2 sm:flex-row">
+        {/* Room Header */}
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-            <input
-              className="
+          <div className="min-w-0">
+
+            <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
+              {room.roomName}
+            </h1>
+
+            <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--text-secondary)] sm:text-sm">
+
+              <span>
+                Room ID:{" "}
+                <span className="text-[var(--text-secondary)]">
+                  {room.roomId}
+                </span>
+              </span>
+
+              <span>
+                Host:{" "}
+                <span className="text-[var(--text-secondary)]">
+                  {room.hostName}
+                </span>
+              </span>
+
+            </div>
+          </div>
+
+        </div>
+
+        {/* Host Video URL Input */}
+        {user?.userName === room.hostName && (
+          <div className="mb-5 rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg-1)] p-3 shadow-xl sm:p-4">
+
+            <div className="flex flex-col gap-2 sm:flex-row">
+
+              <input
+                className="
                 h-11 min-w-0 flex-1 rounded-xl
                 border border-[var(--card-border)]
                 bg-[var(--input-bg)]
@@ -285,14 +290,14 @@ export default function Room() {
                 focus:ring-2
                 focus:ring-blue-500/10
               "
-              placeholder="Paste YouTube URL"
-              value={videoUrl}
-              onChange={(e) => setVideoUrl(e.target.value)}
-            />
+                placeholder="Paste YouTube URL"
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+              />
 
-            <button
-              onClick={handleLoadVideo}
-              className="
+              <button
+                onClick={handleLoadVideo}
+                className="
                 h-11 rounded-xl
                 bg-gradient-to-r from-red-600 to-red-500
                 px-5 text-sm font-semibold text-white
@@ -300,210 +305,207 @@ export default function Room() {
                 hover:brightness-110
                 active:scale-[0.98]
               "
-            >
-              Load Video
-            </button>
+              >
+                Load Video
+              </button>
 
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
 
-        {/* Video Section */}
-        <section className="min-w-0">
+          {/* Video Section */}
+          <section className="min-w-0">
 
-          <div
-            className="
+            <div
+              className="
               overflow-hidden rounded-2xl
               border border-[var(--card-border)]
               bg-[var(--card-bg-1)]
               shadow-[0_20px_60px_rgba(0,0,0,0.35)]
             "
-          >
+            >
 
-            {/* Video Header */}
-            <div
-              className="
+              {/* Video Header */}
+              <div
+                className="
                 flex items-center justify-between
                 border-b border-[var(--card-border)]
                 bg-[var(--card-bg-2)]
                 px-4 py-3
               "
-            >
+              >
 
-              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
 
-                <span className="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
+                  <span className="h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
 
-                <span className="text-sm font-medium text-[var(--text-primary)]">
-                  Watch Together
+                  <span className="text-sm font-medium text-[var(--text-primary)]">
+                    Watch Together
+                  </span>
+
+                </div>
+
+                <span className="text-xs text-[var(--text-secondary)]">
+                  Live Sync
                 </span>
 
               </div>
 
-              <span className="text-xs text-[var(--text-secondary)]">
-                Live Sync
-              </span>
+              {/* Video */}
+              <div className="w-full bg-black">
+
+                <div className="relative aspect-video w-full">
+
+                  <VideoPlayer
+                    videoId={videoId}
+                    onPlay={handlePlay}
+                    onPause={handlePause}
+                    remoteAction={remoteAction}
+                  />
+
+                </div>
+
+              </div>
 
             </div>
 
-            {/* Video */}
-            <div className="w-full bg-black">
+          </section>
 
-              <div className="relative aspect-video w-full">
+          {/* Sidebar */}
+          <aside className="min-w-0 space-y-5">
 
-                <VideoPlayer
-                  videoId={videoId}
-                  onPlay={handlePlay}
-                  onPause={handlePause}
-                  remoteAction={remoteAction}
+            {/* Participants */}
+            <div
+              className="
+              overflow-hidden rounded-2xl
+              border border-[var(--card-border)]
+              bg-[var(--card-bg-1)]
+              shadow-xl
+            "
+            >
+
+              <div className="border-b border-[var(--card-border)] px-4 py-3">
+
+                <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                  Participants
+                </h2>
+
+              </div>
+
+              <div className="p-4">
+
+                <Participants
+                  participants={participants}
+                  host={room.hostName}
                 />
 
               </div>
 
             </div>
 
-          </div>
-
-        </section>
-
-        {/* Sidebar */}
-        <aside className="min-w-0 space-y-5">
-
-          {/* Participants */}
-          <div
-            className="
+            {/* Chat */}
+            <div
+              className="
               overflow-hidden rounded-2xl
               border border-[var(--card-border)]
               bg-[var(--card-bg-1)]
               shadow-xl
             "
-          >
+            >
 
-            <div className="border-b border-[var(--card-border)] px-4 py-3">
+              {/* Chat Header */}
+              <div className="border-b border-[var(--card-border)] px-4 py-3">
 
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                Participants
-              </h2>
+                <div className="flex items-center justify-between">
 
-            </div>
+                  <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                    Live Chat
+                  </h2>
 
-            <div className="p-4">
+                  <span className="text-xs text-[var(--text-secondary)]">
+                    {messages.length} messages
+                  </span>
 
-              <Participants
-                participants={participants}
-                host={room.hostName}
-              />
-
-            </div>
-
-          </div>
-
-          {/* Chat */}
-          <div
-            className="
-              overflow-hidden rounded-2xl
-              border border-[var(--card-border)]
-              bg-[var(--card-bg-1)]
-              shadow-xl
-            "
-          >
-
-            {/* Chat Header */}
-            <div className="border-b border-[var(--card-border)] px-4 py-3">
-
-              <div className="flex items-center justify-between">
-
-                <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                  Live Chat
-                </h2>
-
-                <span className="text-xs text-[var(--text-secondary)]">
-                  {messages.length} messages
-                </span>
+                </div>
 
               </div>
 
-            </div>
+              {/* Messages */}
+              <div className="h-64 overflow-y-auto p-3 sm:h-72">
 
-            {/* Messages */}
-            <div className="h-64 overflow-y-auto p-3 sm:h-72">
+                {messages.length === 0 ? (
 
-              {messages.length === 0 ? (
+                  <div className="flex h-full items-center justify-center text-center">
 
-                <div className="flex h-full items-center justify-center text-center">
+                    <p className="text-xs text-[var(--text-secondary)]">
+                      No messages yet.
+                      <br />
+                      Start the conversation.
+                    </p>
 
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    No messages yet.
-                    <br />
-                    Start the conversation.
-                  </p>
+                  </div>
 
-                </div>
+                ) : (
 
-              ) : (
+                  <div className="space-y-3">
 
-                <div className="space-y-3">
+                    {messages.map((msg, index) => {
 
-                  {messages.map((msg, index) => {
+                      const isSender =
+                        msg.sender === user?.userName;
 
-                    const isSender =
-                      msg.sender === user?.userName;
-
-                    return (
-                      <div
-                        key={index}
-                        className={`flex ${
-                          isSender
-                            ? "justify-end"
-                            : "justify-start"
-                        }`}
-                      >
-
+                      return (
                         <div
-                          className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${
-                            isSender
-                              ? "rounded-br-md bg-blue-600 text-white"
-                              : "rounded-bl-md bg-[var(--chat-received-bg)] text-[var(--chat-received-text)]"
-                          }`}
+                          key={index}
+                          className={`flex ${isSender
+                              ? "justify-end"
+                              : "justify-start"
+                            }`}
                         >
 
                           <div
-                            className={`mb-1 text-[10px] font-semibold ${
-                              isSender
-                                ? "text-blue-100"
-                                : "text-[var(--text-secondary)]"
-                            }`}
+                            className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${isSender
+                                ? "rounded-br-md bg-blue-600 text-white"
+                                : "rounded-bl-md bg-[var(--chat-received-bg)] text-[var(--chat-received-text)]"
+                              }`}
                           >
-                            {msg.sender}
-                          </div>
 
-                          <div className="break-words leading-5">
-                            {msg.message}
+                            <div
+                              className={`mb-1 text-[10px] font-semibold ${isSender
+                                  ? "text-blue-100"
+                                  : "text-[var(--text-secondary)]"
+                                }`}
+                            >
+                              {msg.sender}
+                            </div>
+
+                            <div className="break-words leading-5">
+                              {msg.message}
+                            </div>
+
                           </div>
 
                         </div>
+                      );
 
-                      </div>
-                    );
+                    })}
 
-                  })}
+                  </div>
 
-                </div>
+                )}
 
-              )}
+              </div>
 
-            </div>
+              {/* Chat Input */}
+              <div className="border-t border-[var(--card-border)] p-3">
 
-            {/* Chat Input */}
-            <div className="border-t border-[var(--card-border)] p-3">
+                <div className="flex gap-2">
 
-              <div className="flex gap-2">
-
-                <input
-                  className="
+                  <input
+                    className="
                     min-w-0 flex-1 rounded-xl
                     border border-[var(--card-border)]
                     bg-[var(--input-bg)]
@@ -516,15 +518,15 @@ export default function Room() {
                     focus:ring-2
                     focus:ring-blue-500/10
                   "
-                  placeholder="Type a message..."
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  onKeyDown={handleChatKeyDown}
-                />
+                    placeholder="Type a message..."
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                    onKeyDown={handleChatKeyDown}
+                  />
 
-                <button
-                  onClick={handleSendMessage}
-                  className="
+                  <button
+                    onClick={handleSendMessage}
+                    className="
                     rounded-xl
                     bg-blue-600
                     px-4 py-2
@@ -533,22 +535,22 @@ export default function Room() {
                     hover:bg-blue-500
                     active:scale-95
                   "
-                >
-                  Send
-                </button>
+                  >
+                    Send
+                  </button>
+
+                </div>
 
               </div>
 
             </div>
 
-          </div>
+          </aside>
 
-        </aside>
+        </div>
 
-      </div>
+      </main>
 
-    </main>
-
-  </div>
-);
+    </div>
+  );
 }
