@@ -74,6 +74,13 @@ export default function Room() {
                 toast.success("A new user joined the room");
                 break;
 
+              case "USER_LEFT":
+                setParticipants(event.participants);
+                if (!isLeavingRef.current) {
+                  toast.error("A user left the room");
+                }
+                break;
+
               case "ROOM_CLOSED":
                 isLeavingRef.current = true;
 
@@ -84,13 +91,6 @@ export default function Room() {
 
                 disconnectSocket();
                 navigate("/");
-                break;
-
-              case "USER_LEFT":
-                setParticipants(event.participants);
-                if (!isLeavingRef.current) {
-                  toast.error("A user left the room");
-                }
                 break;
 
               default:
@@ -132,9 +132,12 @@ export default function Room() {
     return () => {
 
       if (hasJoinedRef.current && !isLeavingRef.current) {
+
         isLeavingRef.current = true;
+
         leaveParticipant(roomId).catch(() => { });
       }
+
       disconnectSocket();
     };
   }, [roomId]);
