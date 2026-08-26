@@ -1,4 +1,4 @@
-import { useEffect, useState ,useRef} from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRoomDetails, joinParticipant, leaveParticipant, getParticipants } from "../api/room";
 import { connectSocket, disconnectSocket, subscribeSync, subscribeRoom, subscribeChat, sendMessage, subscribeChatError } from "../websocket/stompClient";
@@ -74,13 +74,6 @@ export default function Room() {
                 toast.success("A new user joined the room");
                 break;
 
-              case "USER_LEFT":
-                setParticipants(event.participants);
-                if(!isLeavingRef.current) {
-                  toast.error("A user left the room");
-                }
-                break;
-
               case "ROOM_CLOSED":
                 isLeavingRef.current = true;
 
@@ -91,6 +84,13 @@ export default function Room() {
 
                 disconnectSocket();
                 navigate("/");
+                break;
+
+              case "USER_LEFT":
+                setParticipants(event.participants);
+                if (!isLeavingRef.current) {
+                  toast.error("A user left the room");
+                }
                 break;
 
               default:
@@ -131,7 +131,7 @@ export default function Room() {
 
     return () => {
 
-      if(hasJoinedRef.current && !isLeavingRef.current) {
+      if (hasJoinedRef.current && !isLeavingRef.current) {
         isLeavingRef.current = true;
         leaveParticipant(roomId).catch(() => { });
       }
@@ -474,22 +474,22 @@ export default function Room() {
                         <div
                           key={index}
                           className={`flex ${isSender
-                              ? "justify-end"
-                              : "justify-start"
+                            ? "justify-end"
+                            : "justify-start"
                             }`}
                         >
 
                           <div
                             className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${isSender
-                                ? "rounded-br-md bg-blue-600 text-white"
-                                : "rounded-bl-md bg-[var(--chat-received-bg)] text-[var(--chat-received-text)]"
+                              ? "rounded-br-md bg-blue-600 text-white"
+                              : "rounded-bl-md bg-[var(--chat-received-bg)] text-[var(--chat-received-text)]"
                               }`}
                           >
 
                             <div
                               className={`mb-1 text-[10px] font-semibold ${isSender
-                                  ? "text-blue-100"
-                                  : "text-[var(--text-secondary)]"
+                                ? "text-blue-100"
+                                : "text-[var(--text-secondary)]"
                                 }`}
                             >
                               {msg.sender}
