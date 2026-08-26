@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getRoomDetails, joinParticipant, leaveParticipant, getParticipants } from "../api/room";
 import { connectSocket, disconnectSocket, subscribeSync, subscribeRoom, subscribeChat, sendMessage, subscribeChatError } from "../websocket/stompClient";
@@ -12,6 +12,8 @@ export default function Room() {
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const isLeavingRef = useRef(false);
+  const hasJoinedRef = useRef(false);
 
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +31,8 @@ export default function Room() {
         const token = localStorage.getItem("token");
 
         await joinParticipant(roomId);
+        hasJoinedRef.current = true;
+
         const res = await getParticipants(roomId);
         setParticipants(res.data);
 
@@ -72,15 +76,20 @@ export default function Room() {
 
               case "USER_LEFT":
                 setParticipants(event.participants);
-                toast.error("A user left the room");
+                if(!isLeavingRef.current) {
+                  toast.error("A user left the room");
+                }
                 break;
 
               case "ROOM_CLOSED":
+                isLeavingRef.current = true;
+
                 toast.error(
                   "The host has left the room. This room is now inactive. Please contact the host.",
                   { duration: 5000 }
                 );
 
+                disconnectSocket();
                 navigate("/");
                 break;
 
@@ -121,7 +130,11 @@ export default function Room() {
     connect();
 
     return () => {
-      leaveParticipant(roomId).catch(() => { });
+
+      if(hasJoinedRef.current && !isLeavingRef.current) {
+        isLeavingRef.current = true;
+        leaveParticipant(roomId).catch(() => { });
+      }
       disconnectSocket();
     };
   }, [roomId]);
