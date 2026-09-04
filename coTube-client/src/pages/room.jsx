@@ -116,10 +116,10 @@ export default function Room() {
             roomId,
           });
 
-          sendMessage("/app/video.sync", {
-            roomId,
-            action: "SYNC_REQUEST",
-          });
+          // sendMessage("/app/video.sync", {
+          //   roomId,
+          //   action: "SYNC_REQUEST",
+          // });
         });
       } catch (err) {
         navigate("/");
@@ -131,13 +131,7 @@ export default function Room() {
 
     return () => {
 
-      if (hasJoinedRef.current && !isLeavingRef.current) {
-
-        isLeavingRef.current = true;
-
-        leaveParticipant(roomId).catch(() => { });
-      }
-
+      isLeavingRef.current = true;
       disconnectSocket();
     };
   }, [roomId]);
@@ -219,6 +213,16 @@ export default function Room() {
     });
   };
 
+  const handleLeaveRoom = async () => {
+    try {
+      isLeavingRef.current = true;
+      await leaveParticipant(roomId);
+      navigate("/");
+    } catch (err) {
+      toast.error("Failed to leave the room");
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#070b18] flex items-center justify-center">
@@ -283,6 +287,25 @@ export default function Room() {
 
             </div>
           </div>
+
+          <button
+  onClick={handleLeaveRoom}
+  className="
+    h-10 shrink-0 rounded-xl
+    border
+    px-4
+    text-sm font-semibold
+    transition
+    active:scale-[0.98]
+  "
+  style={{
+    color: "var(--danger)",
+    backgroundColor: "var(--danger-bg)",
+    borderColor: "var(--danger-border)",
+  }}
+>
+  Leave Room
+</button>
 
         </div>
 
