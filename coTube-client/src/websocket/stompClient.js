@@ -22,7 +22,7 @@ export const connectSocket = (token, onConnect) => {
             Authorization: `Bearer ${token}`,
         },
 
-        reconnectDelay: 5000,
+        reconnectDelay: 100,
 
         onConnect: () => {
             onConnect?.();
